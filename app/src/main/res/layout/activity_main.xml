@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.arduino4.MainActivity">
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_connect"
+        android:onClick="checkBluetooth"
+        android:text="블루투스 연결" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/linearLayout"
+        android:layout_below="@+id/button_connect">
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        />
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/sendString"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+
+        android:layout_below="@+id/linearLayout"
+        android:ems="10">
+        <requestFocus/>
+    </EditText>
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/receiveString"
+        android:layout_toRightOf="@+id/sendString"
+        android:text="Send" />
+
+    <EditText
+        android:id="@+id/receiveString"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/sendString"
+        android:layout_alignRight="@+id/sendButton"
+        android:layout_below="@+id/sendString"
+
+        android:focusable="false"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="금지구역 지도보기"
+        android:id="@+id/button_map"
+        android:layout_alignBottom="@+id/receiveString"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="블루투스 목록"
+        android:id="@+id/button_list"
+        android:onClick="list"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/button_connect"
+        android:layout_toEndOf="@+id/button_connect" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="블루트스 채팅"
+        android:id="@+id/button_chat"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
+</RelativeLayout>
