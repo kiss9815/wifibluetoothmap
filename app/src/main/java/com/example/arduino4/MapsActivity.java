@@ -1,8 +1,7 @@
 package com.example.arduino4;
 
 import android.content.Context;
-import android.content.Loader;
-import android.content.pm.PackageManager;
+
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -20,6 +19,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -29,17 +30,24 @@ import java.text.DecimalFormat;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    Double latitude = 0.0;
-    Double longitude = 0.0;
+    double latitude ;
+    double longitude ;
 
-    Double droneLatitude = 0.0;
-    Double droneLongitude =0.0;
+    double droneLatitude ;
+    double droneLongitude ;
+
+    private static final String TAG_LOCATION = "location";
+    private static final String TAG_DRONE = "drone";
+
+
 
     TextView text_distance;
     float actual_distance; //실제 거리 값을 담을 변수
     TextView text_gps;
-    String Item;
-    float gpsItem;
+
+    Location lastLocation;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,19 +59,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         text_distance = (TextView)findViewById(R.id.text_distance);
         text_gps = (TextView)findViewById(R.id.textView_gps);
-//        Item = getIntent().getExtras().getString("GPS_value");
-////            Item = getIntent().getStringExtra()
-//        gpsItem = Float.valueOf(Item);
-//
 
-        Button btn_distance = (Button)findViewById(R.id.button_distance);
-        btn_distance.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                distanceCalculate();
-                Log.d("aaa", "" + actual_distance);
-            }
-        });
+
+
 
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -75,17 +73,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 minTime, minDistance, listener);
 
-        Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+         lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (lastLocation != null) {
+
+
+
             latitude = lastLocation.getLatitude();
             longitude = lastLocation.getLongitude();
             Toast.makeText(getApplicationContext(), "경도" + latitude + " 위도" + longitude, Toast.LENGTH_SHORT).show();
            text_gps.setText("가장 최근의 내 위치:\n" + latitude + ", " + longitude);
-//        textView.invalidate();
 
+
+            Button btn_distance = (Button)findViewById(R.id.button_distance);
+            btn_distance.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    distanceCalculate();
+                    Log.d("aaa", "" + latitude +":"+ longitude);
+                }
+            });
         }
 
-        distanceCalculate();
+
 
     }
 ////////////////////////////oncreate
@@ -113,16 +122,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         // Add a marker in Sydney and move the camera
+        //36.354219, 127.341823 // 유성온천
+        //36.362657, 127.344850
+        droneLatitude = 36.362657 ;
+        droneLongitude = 127.344850;
+        LatLng dronePosition = new LatLng(droneLatitude, droneLongitude);
+        mMap.addMarker(new MarkerOptions().position(dronePosition).title("드론위치"));
 
-        droneLatitude = 37.471776;
-        droneLongitude = 126.958504;
-        LatLng nowPosition = new LatLng(droneLatitude, droneLongitude);
-        mMap.addMarker(new MarkerOptions().position(nowPosition).title("드론위치"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(dronePosition));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dronePosition, 15));
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(nowPosition));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nowPosition, 15));
-
-
+         mMap.addCircle(new CircleOptions()
+                .center(dronePosition)
+                .radius(10000)
+                .strokeColor(Color.RED)
+                .fillColor(Color.TRANSPARENT));
     }
 
     class MyLocationListener implements LocationListener {
@@ -158,21 +172,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void distanceCalculate(){
-        Location locationA = new Location("내 위치");
-        locationA.setLatitude(latitude);
-        locationA.setLongitude(longitude);
+        double latitude_cal = lastLocation.getLatitude();
+        double longitude_cal = lastLocation.getLongitude();
 
-        Location locationB = new Location("드론 위치");
-        locationB.setLatitude(droneLatitude);
-        locationB.setLongitude(droneLongitude);
+        Log.i(TAG_LOCATION, latitude_cal + " : " + longitude_cal );
 
-        actual_distance = locationA.distanceTo(locationB);
-        Log.d("aaa", "" + actual_distance);
-        float a = actual_distance/100000;
+        Log.i(TAG_DRONE, droneLatitude + " ," + droneLongitude);
+
+        Distance distance =  new Distance();
+        double dist = distance.calDistance(latitude_cal, longitude_cal, droneLatitude, droneLongitude);
+
+        Log.i("dist", "" + dist);
+        double a = dist/100000;
         DecimalFormat fmt = new DecimalFormat("0.##");
         String decimal =  fmt.format(a);
 
-        text_distance.setText(decimal + "km");
+        text_distance.setText(decimal + "m" + " sdf :" + dist );
 
     }
+
+
+
 }

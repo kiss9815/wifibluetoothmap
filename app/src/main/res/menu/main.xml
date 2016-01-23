@@ -8,4 +8,7 @@
 
     <item android:title="bluetooth_connect"
         android:orderInCategory="1" android:id="@+id/bluetooth_connection"/>
+
+    <item android:title="map_view"
+        android:orderInCategory="1" android:id="@+id/mapView"/>
 </menu>

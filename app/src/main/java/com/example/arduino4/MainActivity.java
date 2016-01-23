@@ -290,6 +290,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent2);
                 return true;
 
+            case R.id.mapView:
+                Intent intent3 = new Intent(this, FragmentMapActivity.class);
+                startActivity(intent3);
         }
         return super.onOptionsItemSelected(item);
     }

@@ -62,8 +62,17 @@ public class FragmentMapActivity extends AppCompatActivity {
         }
         private void showCurrentMap(Double latitude, Double longtitude){
             LatLng curPoint = new LatLng(latitude, longtitude);
+
+            map.setMyLocationEnabled(true);
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));
             map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            map.getUiSettings().setAllGesturesEnabled(true);
+            map.getUiSettings().setRotateGesturesEnabled(true);
+            map.getUiSettings().setMyLocationButtonEnabled(true);
+            map.getUiSettings().setZoomControlsEnabled(true);
+            map.getUiSettings().setMapToolbarEnabled(true);
+
+
         }
 
 
