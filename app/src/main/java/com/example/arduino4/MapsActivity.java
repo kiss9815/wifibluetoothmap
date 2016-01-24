@@ -2,11 +2,11 @@ package com.example.arduino4;
 
 import android.content.Context;
 
+
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,7 +45,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     float actual_distance; //실제 거리 값을 담을 변수
     TextView text_gps;
 
+
+    MyLocationListener listener;
+    LocationManager manager;
     Location lastLocation;
+    Area area;
 
 
     @Override
@@ -60,40 +64,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         text_distance = (TextView)findViewById(R.id.text_distance);
         text_gps = (TextView)findViewById(R.id.textView_gps);
 
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
 
-        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        long minTime = 10000;//10초
-        float minDistance = 0;
-
-        MyLocationListener listener = new MyLocationListener();
-
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                minTime, minDistance, listener);
-
-         lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (lastLocation != null) {
-
-
-
-            latitude = lastLocation.getLatitude();
-            longitude = lastLocation.getLongitude();
-            Toast.makeText(getApplicationContext(), "경도" + latitude + " 위도" + longitude, Toast.LENGTH_SHORT).show();
-           text_gps.setText("가장 최근의 내 위치:\n" + latitude + ", " + longitude);
-
-
-            Button btn_distance = (Button)findViewById(R.id.button_distance);
-            btn_distance.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    distanceCalculate();
-                    Log.d("aaa", "" + latitude +":"+ longitude);
-                }
-            });
-        }
-
+        Button btn_distance = (Button)findViewById(R.id.button_distance);
+        btn_distance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                distanceCalculate();
+                Log.d("aaa", "" + latitude +":"+ longitude);
+            }
+        });
 
 
     }
@@ -132,11 +114,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(dronePosition));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dronePosition, 15));
 
-         mMap.addCircle(new CircleOptions()
-                .center(dronePosition)
-                .radius(10000)
-                .strokeColor(Color.RED)
-                .fillColor(Color.TRANSPARENT));
+        addCir();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(manager!= null){
+            manager.removeUpdates(listener);
+        }
+
+    }
+    public void requestLocation(){
+        long minTime = 10000;//10초
+        float minDistance = 0;
+
+        listener = new MyLocationListener();
+
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                minTime, minDistance, listener);
+
+        lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (lastLocation != null) {
+
+            latitude = lastLocation.getLatitude();
+            longitude = lastLocation.getLongitude();
+            Toast.makeText(getApplicationContext(), "경도" + latitude + " 위도" + longitude, Toast.LENGTH_SHORT).show();
+            text_gps.setText("가장 최근의 내 위치:\n" + latitude + ", " + longitude);
+
+        }
+
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        requestLocation();
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        requestLocation();
     }
 
     class MyLocationListener implements LocationListener {
@@ -183,14 +203,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double dist = distance.calDistance(latitude_cal, longitude_cal, droneLatitude, droneLongitude);
 
         Log.i("dist", "" + dist);
-        double a = dist/100000;
-        DecimalFormat fmt = new DecimalFormat("0.##");
-        String decimal =  fmt.format(a);
 
-        text_distance.setText(decimal + "m" + " sdf :" + dist );
+        DecimalFormat fmt = new DecimalFormat("0.##");
+        String decimal =  fmt.format(dist);
+
+        text_distance.setText(decimal + "m");
 
     }
 
+    private void addCir() {
 
+
+        area = new Area();
+        int hayun = getResources().getColor(R.color.hayun);
+        mMap.addCircle(new CircleOptions().center(area.a1).radius(5000).strokeColor(Color.RED).fillColor(hayun));
+
+        mMap.addCircle(new CircleOptions().center(area.a2).radius(20000).strokeColor(Color.RED).fillColor(hayun));
+
+        mMap.addCircle(new CircleOptions().center(area.a3).radius(20000).strokeColor(Color.RED).fillColor(hayun));
+
+        mMap.addCircle(new CircleOptions().center(area.a4).radius(20000).strokeColor(Color.RED).fillColor(hayun));
+
+        mMap.addCircle(new CircleOptions().center(area.a5).radius(20000).strokeColor(Color.RED).fillColor(hayun));
+        mMap.addCircle(new CircleOptions().center(area.a6).radius(20000).strokeColor(Color.RED).fillColor(hayun));
+    }
 
 }
