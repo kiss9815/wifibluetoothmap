@@ -73,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 distanceCalculate();
-                Log.d("aaa", "" + latitude +":"+ longitude);
+                Toast.makeText(getApplicationContext(), "[비행금지구역］금지구역입니다", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -106,8 +106,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add a marker in Sydney and move the camera
         //36.354219, 127.341823 // 유성온천
         //36.362657, 127.344850
-        droneLatitude = 36.362657 ;
-        droneLongitude = 127.344850;
+        //36.367560, 127.345213 //공 5
+        droneLatitude = 36.367560 ;
+        droneLongitude = 127.345213;
         LatLng dronePosition = new LatLng(droneLatitude, droneLongitude);
         mMap.addMarker(new MarkerOptions().position(dronePosition).title("드론위치"));
 
@@ -141,6 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             latitude = lastLocation.getLatitude();
             longitude = lastLocation.getLongitude();
             Toast.makeText(getApplicationContext(), "경도" + latitude + " 위도" + longitude, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "[비행금지구역］금지구역입니다", Toast.LENGTH_SHORT).show();
             text_gps.setText("가장 최근의 내 위치:\n" + latitude + ", " + longitude);
 
         }
@@ -168,6 +170,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             longitude = location.getLongitude();
             LatLng curPoint = new LatLng(latitude, longitude);
             Toast.makeText(getApplicationContext(), "경도" + latitude + " 위도" + longitude, Toast.LENGTH_SHORT).show();
+
 //            mMap.addPolyline(new PolylineOptions().add(curPoint).color(Color.BLUE).width(50));
 //        textView.setText("내 위치:" + latitude + ", " + longitude);
 //        textView.invalidate();

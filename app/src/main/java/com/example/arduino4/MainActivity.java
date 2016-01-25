@@ -8,11 +8,11 @@ import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import java.io.IOException;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.InputStream;
@@ -46,8 +47,10 @@ public class MainActivity extends AppCompatActivity {
     Thread mWorkerThread = null;
     byte[] readBuffer;
     int readBufferPosition;
-    EditText mEditReceive, mEditSend;
-    Button mButtonSend, button_map;
+    Button mButtonSend;
+    EditText mEditSend;
+    TextView receiveText;
+
 
     ////////
     ArrayAdapter adapter;
@@ -75,21 +78,17 @@ public class MainActivity extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.listView);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        mEditReceive = (EditText) findViewById(R.id.receiveString);
+        receiveText = (TextView) findViewById(R.id.receiveString);
         mEditSend = (EditText) findViewById(R.id.sendString);
-        button_map = (Button) findViewById(R.id.button_map);
-        button_map.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MapActivity.class);
-                startActivity(intent);
-            }
-        });
+
+
         mButtonSend = (Button) findViewById(R.id.sendButton);
         mButtonSend.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 sendData(mEditSend.getText().toString());
                 mEditSend.setText("");
+
+                beginListenForData();
             }
         });
 
@@ -111,10 +110,11 @@ public class MainActivity extends AppCompatActivity {
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
             arrayList = new ArrayList();
+
             for (BluetoothDevice bt : pairedDevices) {
                 arrayList.add(bt.getName() + bt.getAddress());
             }
-            Toast.makeText(getApplicationContext(), "페어리된 장치를 보여줍니다", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "페어링된 장치를 보여줍니다", Toast.LENGTH_LONG).show();
             adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList);
             lv.setAdapter(adapter);
         }
@@ -144,6 +144,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    void getData(String msg){
+        msg += mStrDelimiter;
+        try{
+            mInputStream.read(msg.getBytes());
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), "데이터 받는 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show();
+        }
+    }
+
     void connectToSelectedDevice(String selectedDeviceName) {
         mRemoteDevice = getDeviceFromBondedList(selectedDeviceName);
         UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
@@ -153,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
             mOutputStream = mSocket.getOutputStream();
             mInputStream = mSocket.getInputStream();
             beginListenForData();
+            Toast.makeText(getApplicationContext(), "블루투스 기기와 연결을 합니다.", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "블루투스 연결 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show();
 
@@ -181,11 +191,14 @@ public class MainActivity extends AppCompatActivity {
                                             encodedBytes, 0, encodedBytes.length);
                                     final String data = new String(encodedBytes, "US-ASCII");
                                     readBufferPosition = 0;
+                                    Toast.makeText(getApplicationContext(), "데이터 수신했다", Toast.LENGTH_LONG).show();
+                                    receiveText.setText(
+                                            data + mStrDelimiter);
                                     handler.post(new Runnable() {
                                         public void run() {
-                                            mEditReceive.setText(mEditReceive.getText().toString()
-                                                    + data + mStrDelimiter);
-
+                                            receiveText.setText(
+                                                    data + mStrDelimiter);
+                                            Toast.makeText(getApplicationContext(), "데이터 수신했다", Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 } else {

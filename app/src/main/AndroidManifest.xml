@@ -41,7 +41,7 @@
         <uses-library android:name="com.google.android.maps" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".RealMainActivity"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -73,7 +73,8 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".FragmentMapActivity" />
         <activity android:name=".WiFiActivity" />
-        <activity android:name=".WiFiActivity2"></activity>
+        <activity android:name=".WiFiActivity2" />
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>

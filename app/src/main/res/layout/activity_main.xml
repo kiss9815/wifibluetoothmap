@@ -47,7 +47,7 @@
         android:layout_toRightOf="@+id/sendString"
         android:text="Send" />
 
-    <EditText
+    <TextView
         android:id="@+id/receiveString"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,17 +55,9 @@
         android:layout_alignRight="@+id/sendButton"
         android:layout_below="@+id/sendString"
 
-        android:focusable="false"
+
         />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="금지구역 지도보기"
-        android:id="@+id/button_map"
-        android:layout_alignBottom="@+id/receiveString"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -77,14 +69,7 @@
         android:layout_toRightOf="@+id/button_connect"
         android:layout_toEndOf="@+id/button_connect" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="블루트스 채팅"
-        android:id="@+id/button_chat"
-        android:layout_above="@+id/linearLayout"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+
 
 
 </RelativeLayout>

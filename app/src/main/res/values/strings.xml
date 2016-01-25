@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">Arduino4</string>
+    <string name="app_name">NGenius</string>
     <string name="title_activity_maps">Map</string>
+    <string name="introduce">안녕하세요. 저희는 팀 엔지니어스 입니다. 저희 팀은 드론 금지구역 진입방지 예방을 위해 아두이노와 안드로이드 개발을 하였습니다. </string>
 </resources>
